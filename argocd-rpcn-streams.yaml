@@ -20,6 +20,7 @@ spec:
         # valueFiles can reference other sources via their "ref" name
         valueFiles:
           - $values/streams-mode.yaml
+          - $values/streams-configmap.yaml
           # (optional) add more:
           # - $overrides/common.yaml
 
