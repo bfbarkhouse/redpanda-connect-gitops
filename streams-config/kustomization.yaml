@@ -1,4 +1,3 @@
-# config/connect-streams/kustomization.yaml
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: redpanda-connect
@@ -8,7 +7,7 @@ configMapGenerator:
       - woof.yaml
       - meow.yaml
 generatorOptions:
-  disableNameSuffixHash: true  # adds content hash to name for auto-rollout
-  
-commonAnnotations:
-  argocd.argoproj.io/sync-wave: "-1"
+  disableNameSuffixHash: true
+
+# commonAnnotations:
+#   argocd.argoproj.io/sync-wave: "-1"
