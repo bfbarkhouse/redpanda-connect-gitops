@@ -3,3 +3,4 @@ streams:
   streamsConfigMap: connect-streams
 deployment:
   replicaCount: 3
+rolloutConfigMap: true
