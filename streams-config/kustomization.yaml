@@ -9,3 +9,6 @@ configMapGenerator:
       - meow.yaml
 generatorOptions:
   disableNameSuffixHash: true  # adds content hash to name for auto-rollout
+  
+commonAnnotations:
+  argocd.argoproj.io/sync-wave: "-1"
