@@ -3,3 +3,5 @@ streams:
   streamsConfigMap: "connect-streams"
 deployment:
   replicaCount: 3
+podAnnotations:
+  reloader.stakater.com/auto: "true"
