@@ -1,0 +1,41 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: redpanda-connect-streams
+  namespace: argocd        # where your Argo CD is installed
+spec:
+  project: default
+  destination:
+    server: https://F0F4C112F815640983D2390F143D43A0.sk1.us-east-2.eks.amazonaws.com
+    namespace: redpanda-connect       # target namespace for the release
+
+  # Multiple sources: first is the Helm chart, second is the values repo
+  sources:
+    # 1) Helm chart source (from a Helm repo or OCI registry)
+    - repoURL: https://charts.redpanda.com   # or oci://registry-1.docker.io/bitnamicharts
+      chart: connect
+      targetRevision: 3.1.0                      # chart version (or a semver range)
+      helm:
+        releaseName: redpanda-connect-streams
+        # valueFiles can reference other sources via their "ref" name
+        valueFiles:
+          - $values/streams-mode.yaml
+          # (optional) add more:
+          # - $overrides/common.yaml
+
+    # 2) Separate repo that holds your values files
+    - repoURL: https://github.com/bfbarkhouse/redpanda-connect-gitops
+      targetRevision: main
+      ref: values
+
+    # (optional) A third repo of extra overrides
+    # - repoURL: https://github.com/acme/overrides
+    #   targetRevision: main
+    #   ref: overrides
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

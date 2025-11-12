@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: redpanda-connect
+  name: redpanda-connect-standalone
   namespace: argocd        # where your Argo CD is installed
 spec:
   project: default
@@ -16,10 +16,10 @@ spec:
       chart: connect
       targetRevision: 3.1.0                      # chart version (or a semver range)
       helm:
-        releaseName: redpanda-connect
+        releaseName: redpanda-connect-standalone
         # valueFiles can reference other sources via their "ref" name
         valueFiles:
-          - $values/pipeline.yaml
+          - $values/standalone-mode.yaml
           # (optional) add more:
           # - $overrides/common.yaml
 
