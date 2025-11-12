@@ -8,3 +8,5 @@ configMapGenerator:
       - meow.yaml
 generatorOptions:
   disableNameSuffixHash: true
+commonAnnotations:
+  argocd.argoproj.io/sync-wave: "-1"
