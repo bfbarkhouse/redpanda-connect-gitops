@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: redpanda-connect-streams
+  namespace: argocd
+spec:
+  project: default
+  destination:
+    server: https://F0F4C112F815640983D2390F143D43A0.sk1.us-east-2.eks.amazonaws.com
+    namespace: redpanda-connect
+  source:
+    repoURL: https://github.com/bfbarkhouse/redpanda-connect-gitops
+    targetRevision: main
+    path: streams
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

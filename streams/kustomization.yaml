@@ -1,0 +1,27 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: redpanda-connect
+
+# 1) Generate the ConfigMap WITH hash in the name
+configMapGenerator:
+  - name: connect-streams
+    files:
+      - config/woof.yaml
+      - config/meow.yaml
+generatorOptions:
+  disableNameSuffixHash: false
+
+# 2) Inflate the Redpanda Connect Helm chart
+helmCharts:
+  - name: connect
+    repo: https://charts.redpanda.com
+    version: 3.1.0
+    releaseName: redpanda-connect-streams
+    namespace: redpanda-connect
+    includeCRDs: true
+    valuesInline:
+      streams:
+        enabled: true
+        streamsConfigMap: connect-streams
+      deployment:
+        replicaCount: 3
