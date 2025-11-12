@@ -32,7 +32,7 @@ spec:
     # Put a kustomization.yaml here that generates the ConfigMap from files.
     - repoURL: https://github.com/bfbarkhouse/redpanda-connect-gitops
       targetRevision: main
-      path: streams-config/
+      path: streams-config
 
   syncPolicy:
     automated:

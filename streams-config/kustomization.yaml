@@ -8,4 +8,4 @@ configMapGenerator:
       - woof.yaml
       - meow.yaml
 generatorOptions:
-  disableNameSuffixHash: false  # adds content hash to name for auto-rollout
+  disableNameSuffixHash: true  # adds content hash to name for auto-rollout
