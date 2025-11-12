@@ -1,3 +1,5 @@
 streams:
   enabled: true
   streamsConfigMap: "connect-streams"
+deployment:
+  replicaCount: 3
