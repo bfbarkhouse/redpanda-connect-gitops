@@ -7,7 +7,4 @@ configMapGenerator:
       - woof.yaml
       - meow.yaml
 generatorOptions:
-  disableNameSuffixHash: true
-
-# commonAnnotations:
-#   argocd.argoproj.io/sync-wave: "-1"
+  disableNameSuffixHash: false
