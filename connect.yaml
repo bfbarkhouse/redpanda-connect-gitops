@@ -1,0 +1,3 @@
+streams:
+  enabled: true
+  streamsConfigMap: "connect-streams"
