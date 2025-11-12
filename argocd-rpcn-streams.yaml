@@ -20,7 +20,6 @@ spec:
         # valueFiles can reference other sources via their "ref" name
         valueFiles:
           - $values/streams-mode.yaml
-          - $values/streams-configmap.yaml
           # (optional) add more:
           # - $overrides/common.yaml
 
@@ -29,10 +28,11 @@ spec:
       targetRevision: main
       ref: values
 
-    # (optional) A third repo of extra overrides
-    # - repoURL: https://github.com/acme/overrides
-    #   targetRevision: main
-    #   ref: overrides
+    # 3) ConfigMap source (Kustomize or raw YAML)
+    # Put a kustomization.yaml here that generates the ConfigMap from files.
+    - repoURL: https://github.com/bfbarkhouse/redpanda-connect-gitops
+      targetRevision: main
+      path: streams-config/
 
   syncPolicy:
     automated:

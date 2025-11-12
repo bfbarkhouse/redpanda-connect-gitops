@@ -1,0 +1,11 @@
+# config/connect-streams/kustomization.yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: redpanda-connect
+configMapGenerator:
+  - name: connect-streams
+    files:
+      - woof.yaml
+      - meow.yaml
+generatorOptions:
+  disableNameSuffixHash: false  # adds content hash to name for auto-rollout
