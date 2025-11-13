@@ -19,7 +19,7 @@ spec:
         releaseName: redpanda-connect-standalone
         # valueFiles can reference other sources via their "ref" name
         valueFiles:
-          - $values/standalone-mode.yaml
+          - $values/standalone/standalone-mode.yaml
           # (optional) add more:
           # - $overrides/common.yaml
 
