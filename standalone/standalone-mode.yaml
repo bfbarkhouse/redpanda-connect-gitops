@@ -1,5 +1,5 @@
 deployment:
-  replicaCount: 3
+  replicaCount: 1
 config:
   input:
     generate:
