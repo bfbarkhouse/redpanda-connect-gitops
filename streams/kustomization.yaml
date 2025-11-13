@@ -1,10 +1,6 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: redpanda-connect
-metadata:
-  annotations:
-    checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
-
 
 # 1) Generate the ConfigMap WITH hash in the name
 configMapGenerator:
@@ -23,10 +19,5 @@ helmCharts:
     releaseName: redpanda-connect-streams
     namespace: redpanda-connect
     includeCRDs: true
-    #valuesFile:
-    valuesInline:
-      streams:
-        enabled: true
-        streamsConfigMap: connect-streams
-      deployment:
-        replicaCount: 3
+    valuesFile: streams-mode.yaml
+
