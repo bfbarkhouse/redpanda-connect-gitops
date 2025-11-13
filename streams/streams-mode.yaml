@@ -4,7 +4,8 @@ streams:
 deployment:
   replicaCount: 1
 metrics:
-  prometheus: {} # Enable Prometheus metrics collection.
+  prometheus: 
+    mapping: ""
 logger:
   level: INFO # Set logging level (e.g., INFO, DEBUG).
   static_fields:
