@@ -5,13 +5,6 @@ deployment:
   replicaCount: 1
 metrics:
   prometheus: {} # Enable Prometheus metrics collection.
-
-tracing:
-  openTelemetry:
-    http: [] # Configure OpenTelemetry HTTP tracing.
-    grpc: []
-    tags: {}
-
 logger:
   level: INFO # Set logging level (e.g., INFO, DEBUG).
   static_fields:
