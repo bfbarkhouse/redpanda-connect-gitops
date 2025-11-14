@@ -109,6 +109,10 @@ Uses Kustomize to:
 ### Monitoring ArgoCD Applications
 
 ```bash
+# Port forward Argo CD and login
+kubectl port-forward -n argocd svc/argocd-server 8080:80
+argocd login
+
 # List applications
 argocd app list
 
@@ -195,8 +199,8 @@ kubectl logs -n redpanda-connect -l app.kubernetes.io/name=connect -f
 
 ### Check Metrics
 ```bash
-kubectl port-forward -n redpanda-connect svc/redpanda-connect-streams 4195:4195
-curl http://localhost:4195/metrics
+kubectl port-forward -n redpanda-connect svc/redpanda-connect-streams 8081:80
+curl http://localhost:8081/metrics
 ```
 
 ## Troubleshooting
