@@ -194,7 +194,8 @@ The deployments include:
 
 ### View Logs
 ```bash
-kubectl logs -n redpanda-connect -l app.kubernetes.io/name=connect -f
+kubectl logs -n redpanda-connect -l app.kubernetes.io/instance=redpanda-connect-standalone -f
+kubectl logs -n redpanda-connect -l app.kubernetes.io/instance=redpanda-connect-streams -f
 ```
 
 ### Check Metrics

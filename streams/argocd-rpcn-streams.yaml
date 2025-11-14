@@ -3,9 +3,6 @@ kind: Application
 metadata:
   name: redpanda-connect-streams
   namespace: argocd
-  labels: 
-    app.kubernetes.io/name: connect
-    mode: streams
 spec:
   project: default
   destination:

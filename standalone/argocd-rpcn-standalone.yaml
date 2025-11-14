@@ -3,9 +3,6 @@ kind: Application
 metadata:
   name: redpanda-connect-standalone
   namespace: argocd        # where your Argo CD is installed
-  labels: 
-    app.kubernetes.io/name: connect
-    mode: standalone
 spec:
   project: default
   destination:
