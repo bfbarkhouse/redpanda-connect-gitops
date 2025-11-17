@@ -1,9 +1,4 @@
 grafana:
   adminUser: admin
   adminPassword: password
-# prometheus:
-#   prometheusSpec:
-#     # select ALL ServiceMonitors in all namespaces
-#     serviceMonitorSelector: {}
-#     serviceMonitorSelectorNilUsesHelmValues: false
-#     serviceMonitorNamespaceSelector: {}
+  
