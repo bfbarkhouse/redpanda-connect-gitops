@@ -9,11 +9,10 @@ configMapGenerator:
       - redpanda-connect-dashboard.json
     options:
       disableNameSuffixHash: true
+    labels:
+      grafana_dashboard: "1" 
 
-commonLabels:
-  grafana_dashboard: "1" 
-
-# 2) Inflate the Redpanda Connect Helm chart
+# 2) Inflate the Helm chart
 helmCharts:
   - name: kube-prometheus-stack
     repo: https://prometheus-community.github.io/helm-charts
