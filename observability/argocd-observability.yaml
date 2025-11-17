@@ -8,23 +8,10 @@ spec:
   destination:
     server: https://F0F4C112F815640983D2390F143D43A0.sk1.us-east-2.eks.amazonaws.com
     namespace: observability
-  sources:
-    - repoURL: https://github.com/prometheus-community/helm-charts.git
-      targetRevision: kube-prometheus-stack-79.5.0 # example
-      path: charts/kube-prometheus-stack
-      helm:
-       valueFiles:
-        - $values/observability/values.yaml
-    
-    - repoURL: https://github.com/bfbarkhouse/redpanda-connect-gitops
-      targetRevision: main
-      ref: values
-
-    - repoURL: https://github.com/bfbarkhouse/redpanda-connect-gitops
-      targetRevision: main
-      path: observability
-      directory: 
-        recurse: true
+  source:
+    repoURL: https://github.com/bfbarkhouse/redpanda-connect-gitops
+    targetRevision: main
+    path: observability
 
   syncPolicy:
     automated:
