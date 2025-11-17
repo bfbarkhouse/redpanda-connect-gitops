@@ -20,6 +20,12 @@ spec:
       targetRevision: main
       ref: values
 
+    - repoURL: https://github.com/bfbarkhouse/redpanda-connect-gitops
+      targetRevision: main
+      path: observability
+      directory: 
+        recurse: true
+
   syncPolicy:
     automated:
       prune: true
