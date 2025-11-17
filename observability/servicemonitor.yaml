@@ -2,7 +2,7 @@ apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: redpanda-connect-streams
-  namespace: monitoring
+  namespace: observability
   labels:
     release: kube-prometheus-stack
 spec:
