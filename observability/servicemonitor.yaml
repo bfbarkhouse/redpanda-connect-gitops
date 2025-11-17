@@ -4,7 +4,7 @@ metadata:
   name: redpanda-connect-streams
   namespace: observability
   labels:
-    release: observability-kube-prometh
+    release: observability
 spec:
   selector:
     matchLabels:
