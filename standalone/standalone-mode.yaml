@@ -1,5 +1,5 @@
 deployment:
-  replicaCount: 0
+  replicaCount: 1
 envFrom:
   - secretRef:
       name: redpanda-password
@@ -13,11 +13,8 @@ config:
         # Store the generated names in variables
         let first_name = fake("first_name")
         let last_name = fake("last_name")
-
         # Build the message
-        root.user_id = counter()
         root.name = ($first_name + " " + $last_name)
-        root.timestamp = now()
   pipeline:
     processors:
       - label: "processor-uppercase-names"
