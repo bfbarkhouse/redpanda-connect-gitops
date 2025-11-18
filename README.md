@@ -29,6 +29,7 @@ GitOps configurations for deploying Redpanda Connect on Kubernetes using ArgoCD.
 - Kubernetes cluster with ArgoCD installed
 - kubectl configured with cluster access
 - ArgoCD CLI (optional)
+- Redpanda cluster (for pipeline input/output. Get started [here](https://docs.redpanda.com/current/get-started/quick-start/))
 - For streams mode: Kubernetes secret with Redpanda credentials (see [Secret Management](#secret-management))
 
 ## Deployment Modes
