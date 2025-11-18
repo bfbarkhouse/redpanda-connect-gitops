@@ -41,17 +41,20 @@ This repository supports two deployment modes for Redpanda Connect:
 Deploys Redpanda Connect with a single embedded pipeline configuration using Helm.
 
 **Features:**
-- Generates fake user data every second
+- Generates fake names every second
 - Processes names to uppercase
-- Outputs to stdout and Redpanda topic
+- Outputs to stdout and a Redpanda topic
+- Kubernetes secret integration for credential management
 
 **Deploy:**
 ```bash
 # First, create the namespace and secret with your Redpanda credentials
 kubectl create namespace redpanda-connect
+
 create secret generic redpanda-password \
   --from-literal=RP_PASSWORD=<your-password> \
   --namespace redpanda-connect
+
 kubectl apply -f standalone/argocd-rpcn-standalone.yaml
 ```
 
@@ -59,12 +62,11 @@ kubectl apply -f standalone/argocd-rpcn-standalone.yaml
 
 ### Streams Mode
 
-Deploys Redpanda Connect with multiple pipeline configurations managed via ConfigMaps. Includes pipelines that consume from Redpanda topics with secure authentication.
+Deploys Redpanda Connect with multiple pipeline configurations managed via ConfigMaps.
 
 **Features:**
 - Kustomize-based configuration management
 - Multiple independent pipeline configurations (first-names and last-names extraction)
-- Secure connections with TLS and SASL/SCRAM-SHA-256 authentication
 - Kubernetes secret integration for credential management
 - Automatic ConfigMap hash updates for rolling deployments
 - Separate pipeline files for easier management
@@ -74,8 +76,6 @@ Deploys Redpanda Connect with multiple pipeline configurations managed via Confi
 ```bash
 kubectl apply -f streams/argocd-rpcn-streams.yaml
 ```
-
-**Note:** The deployment is currently configured with `replicaCount: 0` (scaled down). To scale up, modify `streams/streams-mode.yaml` and set `deployment.replicaCount` to your desired value.
 
 **Configuration:** `streams/streams-mode.yaml`
 
@@ -154,7 +154,6 @@ Both deployment modes use ArgoCD for continuous delivery with the following sett
 - **Target Branch:** main
 - **Target Namespace:** redpanda-connect (auto-created)
 - **Auto-sync:** Enabled with prune and self-heal
-- **Sync Options:** CreateNamespace=true
 
 ### Standalone Mode Details
 
@@ -190,7 +189,7 @@ argocd app sync redpanda-connect-streams
 argocd app sync observability
 ```
 
-## Customization
+## Kustomization
 
 ### Adding New Pipelines (Streams Mode)
 
