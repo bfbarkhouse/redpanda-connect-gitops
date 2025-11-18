@@ -21,5 +21,18 @@ config:
         mapping: |
           root.name = this.name.uppercase()
   output:
-    label: "output-uppercase-names"
-    stdout: {}
+    broker:
+      pattern: fan_out
+      outputs:
+        - redpanda_common:
+            topic: rpcn-standalone-topic
+        - stdout: {}
+  
+  redpanda:
+    seed_brokers: [ "seed-1e82e69a.cuudhhqrjofpulqb43hg.byoc.prd.cloud.redpanda.com:9092" ]
+    tls:
+      enabled: true
+    sasl:
+      - mechanism: SCRAM-SHA-256
+        username: rpcn-gitops
+        password: cWm9uLiNIquOjRnJNboo2ZgmGx3KIK
