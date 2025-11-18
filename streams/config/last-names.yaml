@@ -8,7 +8,7 @@ input:
       - mechanism: SCRAM-SHA-256
         username: rpcn-gitops
         password: ${RP_PASSWORD}
-    topic: rpcn-standalone-topic
+    topics: [rpcn-standalone-topic]
     consumer_group: rpcn-gitops-last-names
 
 pipeline:
