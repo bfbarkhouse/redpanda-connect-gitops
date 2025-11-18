@@ -22,3 +22,6 @@ helmCharts:
     namespace: observability
     includeCRDs: true
     valuesFile: values.yaml
+
+resources:
+  - servicemonitor.yaml
