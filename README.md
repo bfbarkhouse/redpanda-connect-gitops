@@ -39,7 +39,6 @@ This repository supports two deployment modes for Redpanda Connect:
 Deploys Redpanda Connect with a single embedded pipeline configuration using Helm.
 
 **Features:**
-- 1 replica
 - Generates fake user data every second
 - Processes names to uppercase
 - Outputs to stdout
@@ -60,7 +59,6 @@ Deploys Redpanda Connect with multiple pipeline configurations managed via Confi
 - Multiple independent pipeline configurations
 - Automatic ConfigMap hash updates for rolling deployments
 - Separate pipeline files for easier management
-- 3 replicas
 - Prometheus metrics enabled
 
 **Deploy:**
