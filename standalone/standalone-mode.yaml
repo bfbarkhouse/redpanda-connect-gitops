@@ -1,5 +1,8 @@
 deployment:
   replicaCount: 1
+envFrom:
+  - secretRef:
+      name: redpanda-connect-license
 config:
   input:
     label: "generate-names"
