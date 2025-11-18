@@ -1,9 +1,11 @@
 input:
+  label: "generate-meow"
   generate:
     mapping: root = "meow" # Generates a message with the word "meow" at regular intervals.
     interval: 2s
     count: 0
 output:
+  label: "output-meow"
   stdout:
     codec: lines # Outputs each message as a new line in stdout.
 

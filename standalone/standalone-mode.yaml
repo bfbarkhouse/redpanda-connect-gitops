@@ -2,6 +2,7 @@ deployment:
   replicaCount: 0
 config:
   input:
+    label: "generate-names"
     generate:
       interval: 1s
       count: 0
@@ -16,7 +17,9 @@ config:
         root.timestamp = now()
   pipeline:
     processors:
-      - mapping: |
+      - label: "processor-uppercase-names"
+        mapping: |
           root.name = this.name.uppercase()
   output:
+    label: "output-uppercase-names"
     stdout: {}
