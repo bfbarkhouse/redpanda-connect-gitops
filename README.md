@@ -14,8 +14,8 @@ GitOps configurations for deploying Redpanda Connect on Kubernetes using ArgoCD.
 │   ├── kustomization.yaml                  # Kustomize configuration
 │   ├── streams-mode.yaml                   # Helm values for streams mode
 │   └── config/                             # Pipeline configurations
-│       ├── meow.yaml                       # Sample pipeline 1
-│       └── woof.yaml                       # Sample pipeline 2
+│       ├── first-names.yaml                # Pipeline to extract first names
+│       └── last-names.yaml                 # Pipeline to extract last names
 └── observability/                           # Monitoring stack
     ├── argocd-observability.yaml           # ArgoCD Application manifest
     ├── kustomization.yaml                  # Kustomize configuration for Prometheus/Grafana
@@ -29,6 +29,7 @@ GitOps configurations for deploying Redpanda Connect on Kubernetes using ArgoCD.
 - Kubernetes cluster with ArgoCD installed
 - kubectl configured with cluster access
 - ArgoCD CLI (optional)
+- For streams mode: Kubernetes secret with Redpanda credentials (see [Secret Management](#secret-management))
 
 ## Deployment Modes
 
@@ -52,19 +53,29 @@ kubectl apply -f standalone/argocd-rpcn-standalone.yaml
 
 ### Streams Mode
 
-Deploys Redpanda Connect with multiple pipeline configurations managed via ConfigMaps.
+Deploys Redpanda Connect with multiple pipeline configurations managed via ConfigMaps. Includes pipelines that consume from Redpanda topics with secure authentication.
 
 **Features:**
 - Kustomize-based configuration management
-- Multiple independent pipeline configurations
+- Multiple independent pipeline configurations (first-names and last-names extraction)
+- Secure connections with TLS and SASL/SCRAM-SHA-256 authentication
+- Kubernetes secret integration for credential management
 - Automatic ConfigMap hash updates for rolling deployments
 - Separate pipeline files for easier management
 - Prometheus metrics enabled
 
 **Deploy:**
 ```bash
+# First, create the secret with your Redpanda credentials
+kubectl create secret generic redpanda-password \
+  -n redpanda-connect \
+  --from-literal=RP_PASSWORD='your-password-here'
+
+# Then deploy the streams application
 kubectl apply -f streams/argocd-rpcn-streams.yaml
 ```
+
+**Note:** The deployment is currently configured with `replicaCount: 0` (scaled down). To scale up, modify `streams/streams-mode.yaml` and set `deployment.replicaCount` to your desired value.
 
 **Configuration:** `streams/streams-mode.yaml`
 
@@ -94,22 +105,45 @@ kubectl port-forward -n observability svc/kube-prometheus-stack-grafana 3000:80
 
 ## Pipeline Configurations
 
-### meow.yaml
-Simple pipeline that generates "meow" messages every 2 seconds and outputs to stdout.
+### first-names.yaml
+Consumes messages from a Redpanda topic and extracts first names from full name data.
 
+**Features:**
+- Connects to Redpanda Cloud with TLS and SASL authentication
+- Consumes from `rpcn-standalone-topic` using consumer group `rpcn-gitops-first-names`
+- Extracts first name by splitting on space and taking the first element
+- Outputs to stdout
+
+**Configuration:**
 ```yaml
 input:
-  generate:
-    mapping: root = "meow"
-    interval: 2s
-    count: 0
+  redpanda:
+    seed_brokers: ["seed-xxx.byoc.prd.cloud.redpanda.com:9092"]
+    tls:
+      enabled: true
+    sasl:
+      - mechanism: SCRAM-SHA-256
+        username: rpcn-gitops
+        password: ${RP_PASSWORD}
+    topics: [rpcn-standalone-topic]
+    consumer_group: rpcn-gitops-first-names
+pipeline:
+  processors:
+    - mapping: |
+        root.first_name = this.name.split(" ").index(0)
 output:
   stdout:
     codec: lines
 ```
 
-### woof.yaml
-Additional pipeline for testing multiple concurrent streams (configuration similar to meow.yaml).
+### last-names.yaml
+Consumes messages from a Redpanda topic and extracts last names from full name data.
+
+**Features:**
+- Same connection configuration as first-names.yaml
+- Consumes from `rpcn-standalone-topic` using consumer group `rpcn-gitops-last-names`
+- Extracts last name by splitting on space and taking the second element
+- Outputs to stdout
 
 ## ArgoCD Integration
 
@@ -163,6 +197,9 @@ argocd app sync observability
    ```yaml
    input:
      # your input configuration
+   pipeline:
+     processors:
+       # your processing logic
    output:
      # your output configuration
    ```
@@ -172,13 +209,32 @@ argocd app sync observability
    configMapGenerator:
      - name: connect-streams
        files:
-         - config/woof.yaml
-         - config/meow.yaml
+         - config/first-names.yaml
+         - config/last-names.yaml
          - config/your-new-pipeline.yaml
    ```
 
 3. Commit and push changes
 4. ArgoCD will automatically sync and deploy with the new pipeline
+
+### Secret Management
+
+The pipelines use Kubernetes secrets for sensitive credentials like passwords. To set up the secret:
+
+```bash
+kubectl create secret generic redpanda-password \
+  -n redpanda-connect \
+  --from-literal=RP_PASSWORD='your-password-here'
+```
+
+The secret is referenced in `streams-mode.yaml`:
+```yaml
+envFrom:
+  - secretRef:
+      name: redpanda-password
+```
+
+This makes the `RP_PASSWORD` environment variable available to all pipelines, which can be referenced using `${RP_PASSWORD}` in pipeline configurations.
 
 ### Modifying Helm Values
 
@@ -189,13 +245,16 @@ Edit the respective values files:
 Common modifications:
 ```yaml
 deployment:
-  replicaCount: 3              # Number of replicas
+  replicaCount: 3              # Number of replicas (currently set to 0 - scaled down)
 logger:
   level: INFO                  # Log level (INFO, DEBUG, etc.)
   static_fields:
     '@service': my-service     # Static log fields
 metrics:
   prometheus: {}               # Prometheus metrics configuration
+envFrom:                       # Environment variables from secrets
+  - secretRef:
+      name: redpanda-password  # Reference to Kubernetes secret
 ```
 
 ### Updating Helm Chart Version
