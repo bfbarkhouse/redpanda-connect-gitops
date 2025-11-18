@@ -24,8 +24,8 @@ input:
 
 pipeline:
   processors:
-    mapping: |
-      root.first_name = this.name.split(" ").index(0)
+    - mapping: |
+        root.first_name = this.name.split(" ").index(0)
 
 
 output:

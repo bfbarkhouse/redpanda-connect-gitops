@@ -13,8 +13,8 @@ input:
 
 pipeline:
   processors:
-    mapping: |
-      root.last_name = this.name.split(" ").index(1)
+    - mapping: |
+        root.last_name = this.name.split(" ").index(1)
 
 
 output:
