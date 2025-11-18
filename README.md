@@ -89,7 +89,7 @@ kubectl apply -f observability/argocd-observability.yaml
 **Access Grafana:**
 ```bash
 kubectl port-forward -n observability svc/kube-prometheus-stack-grafana 3000:80
-# Default credentials: admin / prom-operator
+# Default credentials: admin / password
 ```
 
 **Configuration:** `observability/values.yaml`
