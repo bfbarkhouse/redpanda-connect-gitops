@@ -47,6 +47,11 @@ Deploys Redpanda Connect with a single embedded pipeline configuration using Hel
 
 **Deploy:**
 ```bash
+# First, create the namespace and secret with your Redpanda credentials
+kubectl create namespace redpanda-connect
+create secret generic redpanda-password \
+  --from-literal=RP_PASSWORD=<your-password> \
+  --namespace redpanda-connect
 kubectl apply -f standalone/argocd-rpcn-standalone.yaml
 ```
 
@@ -67,12 +72,6 @@ Deploys Redpanda Connect with multiple pipeline configurations managed via Confi
 
 **Deploy:**
 ```bash
-# First, create the secret with your Redpanda credentials
-kubectl create secret generic redpanda-password \
-  -n redpanda-connect \
-  --from-literal=RP_PASSWORD='your-password-here'
-
-# Then deploy the streams application
 kubectl apply -f streams/argocd-rpcn-streams.yaml
 ```
 
@@ -93,6 +92,7 @@ Deploys a complete monitoring stack using kube-prometheus-stack (Prometheus + Gr
 
 **Deploy:**
 ```bash
+kubectl create namespace observability
 kubectl apply -f observability/argocd-observability.yaml
 ```
 
