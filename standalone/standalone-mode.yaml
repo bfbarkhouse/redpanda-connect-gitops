@@ -2,7 +2,7 @@ deployment:
   replicaCount: 1
 envFrom:
   - secretRef:
-      name: redpanda-connect-license
+      name: redpanda-password
 config:
   input:
     label: "generate-names"
@@ -27,15 +27,13 @@ config:
     broker:
       pattern: fan_out
       outputs:
-        - redpanda_common:
+        - redpanda:
+            seed_brokers: [ "seed-1e82e69a.cuudhhqrjofpulqb43hg.byoc.prd.cloud.redpanda.com:9092" ]
+            tls:
+              enabled: true
+            sasl:
+              - mechanism: SCRAM-SHA-256
+                username: rpcn-gitops
+                password: ${RP_PASSWORD}
             topic: rpcn-standalone-topic
         - stdout: {}
-  
-  redpanda:
-    seed_brokers: [ "seed-1e82e69a.cuudhhqrjofpulqb43hg.byoc.prd.cloud.redpanda.com:9092" ]
-    tls:
-      enabled: true
-    sasl:
-      - mechanism: SCRAM-SHA-256
-        username: rpcn-gitops
-        password: cWm9uLiNIquOjRnJNboo2ZgmGx3KIK
