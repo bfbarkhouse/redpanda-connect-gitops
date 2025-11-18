@@ -51,7 +51,7 @@ Deploys Redpanda Connect with a single embedded pipeline configuration using Hel
 # First, create the namespace and secret with your Redpanda credentials
 kubectl create namespace redpanda-connect
 
-create secret generic redpanda-password \
+kubectl create secret generic redpanda-password \
   --from-literal=RP_PASSWORD=<your-password> \
   --namespace redpanda-connect
 
@@ -168,6 +168,13 @@ Uses Kustomize to:
 2. Deploy Helm chart with custom values
 3. Automatically trigger rolling updates when pipelines change
 
+### Observability Mode Details
+
+Uses Kustomize with server-side apply enabled:
+- Deploys kube-prometheus-stack via Helm
+- Generates ConfigMap for Grafana dashboard
+- Uses `ServerSideApply=true` sync option for better handling of large CRDs
+
 ### Monitoring ArgoCD Applications
 
 ```bash
@@ -245,7 +252,7 @@ Edit the respective values files:
 Common modifications:
 ```yaml
 deployment:
-  replicaCount: 3              # Number of replicas (currently set to 0 - scaled down)
+  replicaCount: 1              # Number of replicas
 logger:
   level: INFO                  # Log level (INFO, DEBUG, etc.)
   static_fields:
