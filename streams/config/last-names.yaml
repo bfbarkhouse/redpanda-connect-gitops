@@ -1,0 +1,23 @@
+input:
+  label: "consume-names"
+  redpanda:
+    seed_brokers: ["seed-1e82e69a.cuudhhqrjofpulqb43hg.byoc.prd.cloud.redpanda.com:9092"]
+    tls:
+      enabled: true
+    sasl:
+      - mechanism: SCRAM-SHA-256
+        username: rpcn-gitops
+        password: ${RP_PASSWORD}
+    topic: rpcn-standalone-topic
+    consumer_group: rpcn-gitops-last-names
+
+pipeline:
+  processors:
+    mapping: |
+      root.last_name = this.name.split(" ").index(1)
+
+
+output:
+  label: "output-last-names"
+  stdout:
+    codec: lines # Outputs each message as a new line in stdout.

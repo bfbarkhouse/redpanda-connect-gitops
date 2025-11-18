@@ -1,0 +1,34 @@
+# input:
+#   label: "generate-meow"
+#   generate:
+#     mapping: root = "meow" # Generates a message with the word "meow" at regular intervals.
+#     interval: 2s
+#     count: 0
+# output:
+#   label: "output-meow"
+#   stdout:
+#     codec: lines # Outputs each message as a new line in stdout.
+
+input:
+  label: "consume-names"
+  redpanda:
+    seed_brokers: ["seed-1e82e69a.cuudhhqrjofpulqb43hg.byoc.prd.cloud.redpanda.com:9092"]
+    tls:
+      enabled: true
+    sasl:
+      - mechanism: SCRAM-SHA-256
+        username: rpcn-gitops
+        password: ${RP_PASSWORD}
+    topic: rpcn-standalone-topic
+    consumer_group: rpcn-gitops-first-names
+
+pipeline:
+  processors:
+    mapping: |
+      root.first_name = this.name.split(" ").index(0)
+
+
+output:
+  label: "output-first-names"
+  stdout:
+    codec: lines # Outputs each message as a new line in stdout.

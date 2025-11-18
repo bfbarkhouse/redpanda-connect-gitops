@@ -6,8 +6,8 @@ namespace: redpanda-connect
 configMapGenerator:
   - name: connect-streams
     files:
-      - config/woof.yaml
-      - config/meow.yaml
+      - config/first-names.yaml
+      - config/last-names.yaml
 generatorOptions:
   disableNameSuffixHash: false
 

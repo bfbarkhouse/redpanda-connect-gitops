@@ -41,7 +41,7 @@ Deploys Redpanda Connect with a single embedded pipeline configuration using Hel
 **Features:**
 - Generates fake user data every second
 - Processes names to uppercase
-- Outputs to stdout
+- Outputs to stdout and Redpanda topic
 
 **Deploy:**
 ```bash

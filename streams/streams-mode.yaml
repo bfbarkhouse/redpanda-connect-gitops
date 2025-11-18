@@ -9,3 +9,7 @@ logger:
   level: INFO # Set logging level (e.g., INFO, DEBUG).
   static_fields:
     '@service': redpanda-connect-streams # Add static fields to logs for better traceability.
+envFrom:
+  - secretRef:
+      name: redpanda-password
+      
