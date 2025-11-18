@@ -1,5 +1,5 @@
 deployment:
-  replicaCount: 0
+  replicaCount: 1
 config:
   input:
     label: "generate-names"

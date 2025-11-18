@@ -2,7 +2,7 @@ streams:
   enabled: true
   streamsConfigMap: "connect-streams"
 deployment:
-  replicaCount: 3
+  replicaCount: 1
 metrics:
   prometheus: {}
 logger:
