@@ -9,13 +9,19 @@ GitOps configurations for deploying Redpanda Connect on Kubernetes using ArgoCD.
 ├── standalone/                              # Standalone deployment mode
 │   ├── argocd-rpcn-standalone.yaml         # ArgoCD Application manifest
 │   └── standalone-mode.yaml                # Helm values for standalone mode
-└── streams/                                 # Streams deployment mode
-    ├── argocd-rpcn-streams.yaml            # ArgoCD Application manifest
-    ├── kustomization.yaml                  # Kustomize configuration
-    ├── streams-mode.yaml                   # Helm values for streams mode
-    └── config/                             # Pipeline configurations
-        ├── meow.yaml                       # Sample pipeline 1
-        └── woof.yaml                       # Sample pipeline 2
+├── streams/                                 # Streams deployment mode
+│   ├── argocd-rpcn-streams.yaml            # ArgoCD Application manifest
+│   ├── kustomization.yaml                  # Kustomize configuration
+│   ├── streams-mode.yaml                   # Helm values for streams mode
+│   └── config/                             # Pipeline configurations
+│       ├── meow.yaml                       # Sample pipeline 1
+│       └── woof.yaml                       # Sample pipeline 2
+└── observability/                           # Monitoring stack
+    ├── argocd-observability.yaml           # ArgoCD Application manifest
+    ├── kustomization.yaml                  # Kustomize configuration for Prometheus/Grafana
+    ├── servicemonitor.yaml                 # ServiceMonitor for Redpanda Connect metrics
+    ├── redpanda-connect-dashboard.json     # Grafana dashboard for Redpanda Connect
+    └── values.yaml                         # Helm values for kube-prometheus-stack
 ```
 
 ## Prerequisites
@@ -63,6 +69,30 @@ kubectl apply -f streams/argocd-rpcn-streams.yaml
 ```
 
 **Configuration:** `streams/streams-mode.yaml`
+
+### Observability
+
+Deploys a complete monitoring stack using kube-prometheus-stack (Prometheus + Grafana) with pre-configured dashboards and metric scraping for Redpanda Connect.
+
+**Features:**
+- Prometheus for metrics collection and alerting
+- Grafana for visualization and dashboards
+- Pre-configured Redpanda Connect dashboard
+- ServiceMonitor for automatic metrics discovery
+- Deployed in dedicated observability namespace
+
+**Deploy:**
+```bash
+kubectl apply -f observability/argocd-observability.yaml
+```
+
+**Access Grafana:**
+```bash
+kubectl port-forward -n observability svc/kube-prometheus-stack-grafana 3000:80
+# Default credentials: admin / prom-operator
+```
+
+**Configuration:** `observability/values.yaml`
 
 ## Pipeline Configurations
 
@@ -119,10 +149,12 @@ argocd app list
 # Get application status
 argocd app get redpanda-connect-standalone
 argocd app get redpanda-connect-streams
+argocd app get observability
 
 # Sync manually if needed
 argocd app sync redpanda-connect-standalone
 argocd app sync redpanda-connect-streams
+argocd app sync observability
 ```
 
 ## Customization
@@ -192,13 +224,39 @@ The deployments include:
 - Configurable log levels (default: INFO)
 - Static log fields for better traceability
 
+### Observability Stack
+
+Deploy the complete monitoring stack (Prometheus + Grafana) to visualize metrics:
+
+```bash
+kubectl apply -f observability/argocd-observability.yaml
+```
+
+The observability stack includes:
+- **Prometheus**: Automatically scrapes metrics from Redpanda Connect via ServiceMonitor
+- **Grafana**: Pre-configured with Redpanda Connect dashboard
+- **AlertManager**: For alerting and notifications
+
+Access Grafana dashboard:
+```bash
+kubectl port-forward -n observability svc/kube-prometheus-stack-grafana 3000:80
+# Open http://localhost:3000
+# Default credentials: admin / password
+```
+
+Access Prometheus:
+```bash
+kubectl port-forward -n observability svc/kube-prometheus-stack-prometheus 9090:9090
+# Open http://localhost:9090
+```
+
 ### View Logs
 ```bash
 kubectl logs -n redpanda-connect -l app.kubernetes.io/instance=redpanda-connect-standalone -f
 kubectl logs -n redpanda-connect -l app.kubernetes.io/instance=redpanda-connect-streams -f
 ```
 
-### Check Metrics
+### Check Metrics Directly
 ```bash
 kubectl port-forward -n redpanda-connect svc/redpanda-connect-streams 8081:80
 curl http://localhost:8081/metrics
@@ -231,12 +289,29 @@ kubectl get configmap -n redpanda-connect connect-streams-<hash> -o yaml
 1. Check ArgoCD application status:
    ```bash
    argocd app get redpanda-connect-streams
+   argocd app get observability
    ```
 2. Verify repository access and credentials
 3. Check for syntax errors in YAML files
 4. Review ArgoCD logs:
    ```bash
    kubectl logs -n argocd -l app.kubernetes.io/name=argocd-application-controller
+   ```
+
+### Grafana Dashboard Not Showing Data
+1. Verify ServiceMonitor is created:
+   ```bash
+   kubectl get servicemonitor -n observability
+   ```
+2. Check Prometheus targets:
+   ```bash
+   kubectl port-forward -n observability svc/kube-prometheus-stack-prometheus 9090:9090
+   # Open http://localhost:9090/targets and verify redpanda-connect endpoints are UP
+   ```
+3. Verify metrics are being scraped:
+   ```bash
+   # Query Prometheus for Redpanda Connect metrics
+   curl 'http://localhost:9090/api/v1/query?query=up{job="redpanda-connect-streams"}'
    ```
 
 ### Pods Crashing
@@ -264,12 +339,21 @@ kubectl delete -f streams/argocd-rpcn-streams.yaml
 kubectl delete namespace redpanda-connect
 ```
 
+### Remove Observability Stack
+```bash
+kubectl delete -f observability/argocd-observability.yaml
+kubectl delete namespace observability
+```
+
 ## References
 
 - [Redpanda Connect Documentation](https://docs.redpanda.com/redpanda-connect/)
 - [Redpanda Connect Helm Chart](https://github.com/redpanda-data/helm-charts)
 - [ArgoCD Documentation](https://argo-cd.readthedocs.io/)
 - [Kustomize Documentation](https://kustomize.io/)
+- [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack)
+- [Prometheus Documentation](https://prometheus.io/docs/)
+- [Grafana Documentation](https://grafana.com/docs/)
 
 ## License
 
