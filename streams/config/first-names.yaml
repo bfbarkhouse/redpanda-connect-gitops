@@ -26,6 +26,7 @@ pipeline:
   processors:
     - mapping: |
         root.first_name = this.name.split(" ").index(0)
+        root.first_name = this.lowercase()
 
 
 output:
