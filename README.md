@@ -42,7 +42,7 @@ kubectl config get-contexts #List your K8s contexts
 
 argocd cluster add <context name>
 ```
-**Redpanda topic and user**
+**Redpanda topic, user and ACL**
 
 ```bash
 rpk topic create rpcn-standalone-topic
@@ -53,7 +53,7 @@ rpk security user create rpcn-user --mechanism scram-sha-256
 rpk security acl create --allow-principal User:rpcn-user --operation all \
   --topic rpcn-standalone-topic \
   --group rpcn-gitops-first-names --group rpcn-gitops-last-names
-# This creates the ACL to allow the user perform all operations on the topic and the consumer groups we will use later on
+# ACL to allow the user to perform all operations on the topic and the pipeline consumer groups
 ```
 
 **Create the Kubernetes namespace and load the Redpanda user's password as a secret**
