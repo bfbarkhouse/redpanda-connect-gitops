@@ -1,6 +1,7 @@
 # Redpanda Connect Kubernetes Deployment
 
-GitOps configurations for deploying Redpanda Connect on Kubernetes using ArgoCD.
+GitOps configurations for deploying Redpanda Connect on Kubernetes using ArgoCD. 
+TODO: Link back to blog post
 
 ## Repository Structure
 
@@ -31,6 +32,36 @@ GitOps configurations for deploying Redpanda Connect on Kubernetes using ArgoCD.
 - ArgoCD CLI (optional)
 - Redpanda (for pipeline input/output. Get started [here](https://docs.redpanda.com/current/get-started/quick-start/) or try [Serverless](https://www.redpanda.com/product/serverless) free for 14 days)
 - For streams mode: Kubernetes secret with Redpanda credentials (see [Secret Management](#secret-management))
+- Git and a remote repository like GitHub
+
+## Pre-configure Argo CD and Redpanda
+
+**Connect Argo CD to Kubernetes**
+```bash
+kubectl config get-contexts #List your K8s contexts
+
+argocd cluster add <context name>
+```
+**Redpanda topic and user**
+
+```bash
+rpk topic create rpcn-standalone-topic
+
+rpk security user create rpcn-user --mechanism scram-sha-256
+# make note of the password
+
+rpk security acl create --allow-principal User:rpcn-user --operation all --topic rpcn-standalone-topic --group rpcn-gitops-first-names --group rpcn-gitops-last-names
+# This creates the ACL to allow the user perform all operations on the topic and the consumer groups we will use later on
+```
+
+**Create the Kubernetes namespace and load the Redpanda user's password as a secret**
+```bash
+kubectl create namespace redpanda-connect
+
+kubectl create secret generic redpanda-password \
+  --from-literal=RP_PASSWORD=<your-password> \
+  --namespace redpanda-connect
+```
 
 ## Deployment Modes
 
@@ -48,13 +79,6 @@ Deploys Redpanda Connect with a single embedded pipeline configuration using Hel
 
 **Deploy:**
 ```bash
-# First, create the namespace and secret with your Redpanda credentials
-kubectl create namespace redpanda-connect
-
-kubectl create secret generic redpanda-password \
-  --from-literal=RP_PASSWORD=<your-password> \
-  --namespace redpanda-connect
-
 kubectl apply -f standalone/argocd-rpcn-standalone.yaml
 ```
 
@@ -110,7 +134,7 @@ kubectl port-forward -n observability svc/kube-prometheus-stack-grafana 3000:80
 Consumes messages from a Redpanda topic and extracts first names from full name data.
 
 **Features:**
-- Connects to Redpanda Cloud with TLS and SASL authentication
+- Connects to Redpanda with TLS and SASL authentication
 - Consumes from `rpcn-standalone-topic` using consumer group `rpcn-gitops-first-names`
 - Extracts first name by splitting on space and taking the first element
 - Outputs to stdout
@@ -119,7 +143,7 @@ Consumes messages from a Redpanda topic and extracts first names from full name 
 ```yaml
 input:
   redpanda:
-    seed_brokers: ["seed-xxx.byoc.prd.cloud.redpanda.com:9092"]
+    seed_brokers: ["redpanda-0:9092"]
     tls:
       enabled: true
     sasl:
@@ -152,7 +176,7 @@ Both deployment modes use ArgoCD for continuous delivery with the following sett
 
 - **Source Repository:** https://github.com/bfbarkhouse/redpanda-connect-gitops
 - **Target Branch:** main
-- **Target Namespace:** redpanda-connect (auto-created)
+- **Target Namespace:** redpanda-connect
 - **Auto-sync:** Enabled with prune and self-heal
 
 ### Standalone Mode Details
