@@ -53,7 +53,7 @@ rpk security user create rpcn-user --mechanism scram-sha-256
 rpk security acl create --allow-principal User:rpcn-user --operation all \
   --topic rpcn-standalone-topic \
   --group rpcn-gitops-first-names --group rpcn-gitops-last-names
-# ACL to allow the user to perform all operations on the topic and the pipeline consumer groups
+# Allows principal to perform all operations on the topic and the pipeline consumer groups
 ```
 
 **Create the Kubernetes namespace and load the Redpanda user's password as a secret**
