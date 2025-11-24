@@ -31,6 +31,7 @@ TODO: Link back to blog post
 - kubectl configured with cluster access
 - ArgoCD CLI (optional)
 - Redpanda (for pipeline input/output. Get started [here](https://docs.redpanda.com/current/get-started/quick-start/) or try [Serverless](https://www.redpanda.com/product/serverless) free for 14 days)
+- Redpanda [rpk CLI](https://docs.redpanda.com/current/get-started/rpk-install/) tool installed locally (optional)
 - For streams mode: Kubernetes secret with Redpanda credentials (see [Secret Management](#secret-management))
 - Git and a remote repository like GitHub
 
@@ -43,6 +44,8 @@ kubectl config get-contexts #List your K8s contexts
 argocd cluster add <context name>
 ```
 **Redpanda topic, user and ACL**
+
+This example uses [rpk](https://docs.redpanda.com/current/get-started/rpk-install/) but you can use Redpanda Console or the [Topic](https://docs.redpanda.com/current/reference/k-crd/#k8s-api-github-com-redpanda-data-redpanda-operator-operator-api-redpanda-v1alpha2-topic) and [User](https://docs.redpanda.com/current/reference/k-crd/#k8s-api-github-com-redpanda-data-redpanda-operator-operator-api-redpanda-v1alpha2-user) CRDs available in the [Redpanda Kubernetes Operator](https://github.com/redpanda-data/redpanda-operator) if you are operating Redpanda the GitOps Way as well.
 
 ```bash
 rpk topic create rpcn-standalone-topic
